@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Click on the E Plane</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 20px;
+    }
+    img {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Click on the E Plane</h2>
+<img src="images/e_h_plane.png" width="210" height="241" usemap="#antennaPlanes" alt="Antenna E and H Planes">
+
+<map name="antennaPlanes">
+  <!-- E Plane polygon -->
+  <area shape="poly" coords="99,36,140,80,144,120,100,120,60,160,65,100" alt="E Plane" href="#" onclick="alert('You clicked on the E plane!'); return false;">
+  
+  <!-- H Plane polygon -->
+  <area shape="poly" coords="144,120,186,110,147,145,99,120,65,160,25,138" alt="H Plane" href="#" onclick="alert('This is the H plane, not the E plane.'); return false;">
+</map>
+
+
+<p>Try clicking on the correct plane.</p>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drag and Drop Word Match</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+
+    .container {
+      display: flex;
+      gap: 40px;
+    }
+
+    .column {
+      width: 45%;
+    }
+
+    .term {
+      padding: 10px;
+      margin: 8px 0;
+      background: #e0e0e0;
+      cursor: grab;
+      border: 1px solid #999;
+    }
+
+    .definition {
+      padding: 15px;
+      margin: 8px 0;
+      min-height: 40px;
+      border: 2px dashed #999;
+    }
+
+    .definition.correct {
+      border-color: green;
+      background: #e6ffe6;
+    }
+
+    .definition.incorrect {
+      border-color: red;
+      background: #ffe6e6;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Match the Term to the Definition</h2>
+
+<div class="container">
+  <!-- LEFT: TERMS -->
+  <div class="column" id="terms">
+    <h3>Terms</h3>
+  </div>
+
+  <!-- RIGHT: DEFINITIONS -->
+  <div class="column" id="definitions">
+    <h3>Definitions</h3>
+  </div>
+</div>
+
+<button onclick="checkAnswers()">Check Answers</button>
+
+<script>
+  /*
+    This simulates data you would normally fetch from a database
+  */
+
+  const terms = [
+    { id: "t1", text: "OSPF" },
+    { id: "t2", text: "BGP" },
+    { id: "t3", text: "VLAN" }
+  ];
+
+  const definitions = [
+    { id: "d1", text: "A link-state interior gateway routing protocol" },
+    { id: "d2", text: "A protocol used to segment a switch into logical networks" },
+    { id: "d3", text: "A path-vector routing protocol used between autonomous systems" }
+  ];
+
+  /*
+    Correct answers (term_id -> definition_id)
+    In a real system, this would be server-side only
+  */
+  const correctMatches = {
+    t1: "d1",
+    t2: "d3",
+    t3: "d2"
+  };
+
+  // Render terms
+  const termsDiv = document.getElementById("terms");
+  terms.forEach(term => {
+    const div = document.createElement("div");
+    div.className = "term";
+    div.textContent = term.text;
+    div.draggable = true;
+    div.dataset.termId = term.id;
+
+    div.addEventListener("dragstart", dragStart);
+    termsDiv.appendChild(div);
+  });
+
+  // Render definitions
+  const definitionsDiv = document.getElementById("definitions");
+  definitions.forEach(def => {
+    const div = document.createElement("div");
+    div.className = "definition";
+    div.textContent = def.text;
+    div.dataset.definitionId = def.id;
+
+    div.addEventListener("dragover", dragOver);
+    div.addEventListener("drop", drop);
+    definitionsDiv.appendChild(div);
+  });
+
+  let draggedTermId = null;
+
+  function dragStart(event) {
+    draggedTermId = event.target.dataset.termId;
+    event.dataTransfer.setData("text/plain", draggedTermId);
+  }
+
+  function dragOver(event) {
+    event.preventDefault();
+  }
+
+  function drop(event) {
+    event.preventDefault();
+
+    const termId = event.dataTransfer.getData("text/plain");
+    event.target.dataset.matchedTerm = termId;
+    event.target.textContent =
+      definitions.find(d => d.id === event.target.dataset.definitionId).text +
+      " ← " +
+      terms.find(t => t.id === termId).text;
+  }
+
+  function checkAnswers() {
+    document.querySelectorAll(".definition").forEach(defDiv => {
+      const defId = defDiv.dataset.definitionId;
+      const matchedTerm = defDiv.dataset.matchedTerm;
+
+      defDiv.classList.remove("correct", "incorrect");
+
+      if (matchedTerm && correctMatches[matchedTerm] === defId) {
+        defDiv.classList.add("correct");
+      } else {
+        defDiv.classList.add("incorrect");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

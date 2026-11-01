@@ -59,8 +59,9 @@
       <?php endforeach; ?>
     </select>
 
-    <label>Template (optional, e.g., {{TX}}, {{LOSS}}, {{GAIN}}, {{CONFIG}}):</label>
-    <input type="text" name="template">
+    <label for="template">Template (optional):</label>
+    <textarea id="template" name="template" rows="3" placeholder="For drag and drop: Router:Forwards traffic; Switch:Connects devices || Forwards traffic; Connects devices; Divides traffic"></textarea>
+    <small>For drag and drop, put term:correct match pairs before || and all draggable choices after it. Leave off || and the choices section if you don’t need distractors.</small>
 
     <label>Explanation (optional):</label>
     <textarea name="explanation" rows="3"></textarea>

@@ -60,9 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         draganddrop: function(template) 
         {
-        // template: "term:definition; term2:definition2"
-
-            const pairs = template
+            // Format: "term:definition; term2:definition || choice1; choice2; distractor"
+            const [pairText = "", choiceText = ""] = template.split("||", 2).map(s => s.trim());
+            const pairs = pairText
                 .split(";")
                 .map(s => s.trim())
                 .filter(Boolean)
@@ -71,13 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     return { term, definition: def };
                 });
 
-            const shuffledDefinitions = pairs
-                .map(p => p.definition)
+            const choices = (choiceText
+                ? choiceText.split(";").map(s => s.trim()).filter(Boolean)
+                : pairs.map(p => p.definition))
                 .map(v => ({ v, r: Math.random() }))
                 .sort((a, b) => a.r - b.r)
                 .map(o => o.v);
 
-            return { pairs, shuffledDefinitions };
+            return { pairs, choices };
         }
 
 
@@ -311,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderDragAndDrop(q) 
     {
-        const { pairs, shuffledDefinitions } =
+        const { pairs, choices } =
             dynamicQuestionGenerators.draganddrop(q.template);
 
         questionTextEl.textContent = q.question_text;
@@ -349,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // DEFINITIONS (draggables)
-        shuffledDefinitions.forEach(def => {
+        choices.forEach(def => {
             const item = document.createElement("div");
             item.textContent = def;
             item.draggable = true;
